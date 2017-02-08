@@ -11,17 +11,20 @@ export default class Layout extends React.Component {
             minute: 11,
             second: 11,
             salary: 22,
-            elapsedTimeM: 0,
+            elapsedTimeM: 0
         };
         var started = false
         var elapsedM = 1;
     }
-
+    timer(){
+      return this.elapsedM++
+    }
     drawTime() {
         var date = new Date();
         var hour = date.getHours();
         var minute = date.getMinutes();
         var second = date.getSeconds();
+
         this.setState({
             hour: (hour < 10)
                 ? '0' + hour
@@ -31,8 +34,10 @@ export default class Layout extends React.Component {
                 : minute,
             second: (second < 10)
                 ? '0' + second
-                : second
+                : second,
+            elapsedTimeM: this.timer()
         })
+
     }
 
     setSalary(value) {
@@ -49,7 +54,6 @@ export default class Layout extends React.Component {
         })
     }
 
-
     render() {
         setInterval(() => {
             this.drawTime();
@@ -60,7 +64,7 @@ export default class Layout extends React.Component {
                 <Timer second={this.state.second} minute={this.state.minute} hour={this.state.hour}/>
                 <div class='row'>
                     <Inputs setSalary={this.setSalary.bind(this)} startTimer={this.startTimer.bind(this)}/>
-                    <Counter elapsedTimeM={this.state.elapsedTimeM} salaryCount={this.state.salary} started={this.started}/>
+                    <Counter elapsedTimeM={this.state.elapsedTimeM} salaryCount={this.state.salary}/>
                 </div>
             </div>
         );
