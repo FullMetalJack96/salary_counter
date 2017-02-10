@@ -1,5 +1,5 @@
 import React from 'react';
-import Timer from "./Timer";
+import Clock from "./Clock";
 import Inputs from "./Inputs";
 import Counter from "./Counter";
 
@@ -7,64 +7,44 @@ export default class Layout extends React.Component {
     constructor() {
         super();
         this.state = {
-            hour: 11,
-            minute: 11,
-            second: 11,
-            salary: 22,
-            elapsedTimeM: 0
-        };
-        var started = false
-        var elapsedM = 1;
-    }
-    timer(){
-      return this.elapsedM++
-    }
-    drawTime() {
-        var date = new Date();
-        var hour = date.getHours();
-        var minute = date.getMinutes();
-        var second = date.getSeconds();
-
-        this.setState({
-            hour: (hour < 10)
-                ? '0' + hour
-                : hour,
-            minute: (minute < 10)
-                ? '0' + minute
-                : minute,
-            second: (second < 10)
-                ? '0' + second
-                : second,
-            elapsedTimeM: this.timer()
-        })
-
-    }
-
-    setSalary(value) {
-        console.log(value)
+          salaryBase: 20,
+          btnLabel: 'start'
+        }
+        var started = false;
     }
 
     startTimer() {
         this.started = !this.started;
+        if(this.started){
+          this.setState({
+            btnLabel: 'pause'
+          })
+        }else{
+          this.setState({
+            btnLabel: 'start'
+          })
+        }
     }
 
-    countSalary(salaryBase, elapsedTime) {
+    setSalary(value){
         this.setState({
-            salary: salaryBase * elapsedTime
+          salaryBase: value
         })
     }
-
     render() {
-        setInterval(() => {
-            this.drawTime();
-        }, 1000);
-
         return (
             <div class='container-fluid'>
-                <Timer second={this.state.second} minute={this.state.minute} hour={this.state.hour}/>
+              <div class='row'>
+                <div class='col-md-6 col-xl-6 col-sm-6 col-xs-6 titleBar'>
+                <h2 class='button button--sacnite'>Your salary</h2>
+                </div>
+                <div class='col-md-6 col-xl-6 col-sm-6 col-xs-6 statsBar'>
+                <h2 class='button button--sacnite'>Your statistics</h2>
+                </div>
+              </div>
                 <div class='row'>
-                    <Inputs setSalary={this.setSalary.bind(this)} startTimer={this.startTimer.bind(this)}/>
-                    <Counter elapsedTimeM={this.state.elapsedTimeM} salaryCount={this.state.salary}/>
+                    <Inputs startTimer={this.startTimer.bind(this)} setSalary={this.setSalary.bind(this)} btnLabel={this.state.btnLabel}/>
+                    <Counter timer={this.started} salaryBase={this.state.salaryBase}/>
                 </div>
             </div>
         );
