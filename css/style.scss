@@ -48,17 +48,18 @@ h2 {
     height: 100px !important;
     background-color: #021c1e;
 }
+
 .startBtn2 {
-  position: absolute;
-  top: 40%;
-  font-size: 2em !important;
-  text-transform: uppercase;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  width: 225px !important;
-  height: 100px !important;
-  background-color: #021c1e;
-  margin-top: 10%;
+    position: absolute;
+    top: 40%;
+    font-size: 2em !important;
+    text-transform: uppercase;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: 225px !important;
+    height: 100px !important;
+    background-color: #021c1e;
+    margin-top: 10%;
 }
 
 input[type=number]::-webkit-inner-spin-button,
