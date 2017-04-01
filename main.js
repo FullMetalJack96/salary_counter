@@ -6,11 +6,11 @@ const url = require('url')
 var {ipcMain} = electron;
 var dialog = electron.dialog;
 var fs = require('fs');
+
 let mainWindow
 
 function createWindow() {
     mainWindow = new BrowserWindow({width: 800, height: 600})
-
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file:',
@@ -36,17 +36,19 @@ app.on('activate', function() {
 })
 
 ipcMain.on('async', (event, arg) => {
-  var date = new Date();
+
+    var date = new Date();
     content = '[{"time":' + arg.time + ',"salary":' + arg.salary + ', "date":' + date + '}]';
-    dialog.showSaveDialog(function(fileName) {
-        if (fileName == undefined) {
-            console.log('filename undefined')
-            return;
-        }
-        fs.writeFile(fileName, content, function(err) {
-            if (err) {
-                console.log('error')
-            }
-        })
-    })
+
+    // dialog.showSaveDialog(function(fileName) {
+    //     if (fileName == undefined) {
+    //         console.log('filename undefined')
+    //         return;
+    //     }
+    //     fs.writeFile(fileName, content, function(err) {
+    //         if (err) {
+    //             console.log('error')
+    //         }
+    //     })
+    // })
 });

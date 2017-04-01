@@ -2,10 +2,23 @@ import React from 'react';
 import Clock from "./Clock";
 import Inputs from "./Inputs";
 import Counter from "./Counter";
+import {LineChart, Line} from 'recharts'
 
 const ipcRenderer = window.require('electron').ipcRenderer;
 const remote = window.require('electron').remote;
 var main = remote.require("./main.js");
+
+var firebase = require('firebase');
+
+var config = {
+    apiKey: "AIzaSyAWwkjFluxtfsB_uinWIzv7Htg_8ISBc5g",
+    authDomain: "salary-counter.firebaseapp.com",
+    databaseURL: "https://salary-counter.firebaseio.com",
+    storageBucket: "salary-counter.appspot.com",
+    messagingSenderId: "767173401750"
+};
+
+firebase.initializeApp(config);
 
 export default class Layout extends React.Component {
     constructor() {
@@ -30,13 +43,34 @@ export default class Layout extends React.Component {
     setSalary(value) {
         this.setState({salaryBase: value})
     }
+    writeUserData(time, salary, date, sessionId) {
+
+        firebase.database().ref('sessions/' + sessionId).set({sessionTime: time, salary_full: salary, salary_base: this.state.salaryBase, date: date, user: "Jacek"});
+    }
 
     saveSession(time, salary) {
         if (this.state.saveSession) {
+
             ipcRenderer.send('async', {
                 time: time,
                 salary: salary
             });
+
+            var date = new Date();
+            var daysArray = [
+                'Sunday',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday'
+            ];
+
+            var sessionId = daysArray[date.getDay()] + "_" + date.getFullYear() + "_" + date.getTime();
+
+            this.writeUserData(time, salary, date.toLocaleString(), sessionId);
+
             this.setState({saveSession: false})
         }
     }
@@ -56,9 +90,11 @@ export default class Layout extends React.Component {
                         <h2 class='button button--sacnite'>Your statistics</h2>
                     </div>
                 </div>
-                <div class='row'>
-                    <Inputs save={this.save.bind(this)} startTimer={this.startTimer.bind(this)} setSalary={this.setSalary.bind(this)} btnLabel={this.state.btnLabel}/>
-                    <Counter save={this.state.saveSession} saveSession={this.saveSession.bind(this)} timer={this.started} salaryBase={this.state.salaryBase}/>
+                <div class='content'>
+                    <div class='row'>
+                        <Inputs save={this.save.bind(this)} startTimer={this.startTimer.bind(this)} setSalary={this.setSalary.bind(this)} btnLabel={this.state.btnLabel}/>
+                        <Counter save={this.state.saveSession} saveSession={this.saveSession.bind(this)} timer={this.started} salaryBase={this.state.salaryBase}/>
+                    </div>
                 </div>
             </div>
         );
