@@ -3,6 +3,7 @@
 logs
 *.log
 npm-debug.log*
+PayrollCounter/
 
 # Runtime data
 pids
