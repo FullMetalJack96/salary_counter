@@ -3,6 +3,7 @@ import Clock from "./Clock";
 import Inputs from "./Inputs";
 import Counter from "./Counter";
 import Stats from "./Stats";
+import $ from "jquery"
 
 
 const ipcRenderer = window.require('electron').ipcRenderer;
@@ -49,7 +50,10 @@ export default class Layout extends React.Component {
           var that = this
           firebase.database().ref().on("child_added", function(snapshot, prevChildKey) {
             data = snapshot.val();
-            that.setState({chartData: data});
+            var array = $.map(data, function(value, index){
+              return [value]
+            })
+            that.setState({chartData: array});
           });
 
           break;
@@ -68,9 +72,9 @@ export default class Layout extends React.Component {
     setSalary(value) {
         this.setState({salaryBase: value})
     }
-    writeUserData(time, salary, date, sessionId) {
+    writeUserData(time, salary, date, sessionId, day) {
 
-        firebase.database().ref('sessions/' + sessionId).set({sessionTime: time, salary_full: salary, salary_base: this.state.salaryBase, date: date, user: "Jacek"});
+        firebase.database().ref('sessions/' + sessionId).set({day: day,sessionTime: time, salary_full: salary, salary_base: this.state.salaryBase, date: date, user: "Jacek"});
     }
 
     saveSession(time, salary) {
@@ -94,7 +98,7 @@ export default class Layout extends React.Component {
 
             var sessionId = daysArray[date.getDay()] + "_" + date.getFullYear() + "_" + date.getTime();
 
-            this.writeUserData(time, salary, date.toLocaleString(), sessionId);
+            this.writeUserData(time, salary, date.toLocaleString(), sessionId, daysArray[date.getDay()]);
 
             this.setState({saveSession: false})
         }
