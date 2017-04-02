@@ -2,7 +2,8 @@ import React from 'react';
 import Clock from "./Clock";
 import Inputs from "./Inputs";
 import Counter from "./Counter";
-import {LineChart, Line} from 'recharts'
+import Stats from "./Stats";
+
 
 const ipcRenderer = window.require('electron').ipcRenderer;
 const remote = window.require('electron').remote;
@@ -20,15 +21,39 @@ var config = {
 
 firebase.initializeApp(config);
 
+
+//displayState = 0 - salary/ 1- Stats
+
 export default class Layout extends React.Component {
     constructor() {
         super();
         this.state = {
             salaryBase: 20,
             btnLabel: 'start',
-            saveSession: false
+            saveSession: false,
+            displayState: 'salary',
         }
         var started = false;
+    }
+
+    changeDisplayState(viewStateNr){
+
+      switch (viewStateNr) {
+        case 0:
+          this.setState({displayState: 'salary'})
+
+          break;
+        case 1:
+          var data;
+          this.setState({displayState: 'stats'})
+          var that = this
+          firebase.database().ref().on("child_added", function(snapshot, prevChildKey) {
+            data = snapshot.val();
+            that.setState({chartData: data});
+          });
+
+          break;
+      }
     }
 
     startTimer() {
@@ -78,16 +103,16 @@ export default class Layout extends React.Component {
     save() {
         this.setState({saveSession: true})
     }
-
     render() {
-        return (
+        if (this.state.displayState == 'salary') {
+          return(
             <div class='container-fluid'>
                 <div class='row'>
                     <div class='col-md-6 col-xl-6 col-sm-6 col-xs-6 titleBar'>
-                        <h2 class='button button--sacnite'>Your salary</h2>
+                        <h2 class='button button--sacnite' onClick={() => this.changeDisplayState(0)}>Your salary</h2>
                     </div>
                     <div class='col-md-6 col-xl-6 col-sm-6 col-xs-6 statsBar'>
-                        <h2 class='button button--sacnite'>Your statistics</h2>
+                        <h2 class='button button--sacnite' onClick={() => this.changeDisplayState(1)}>Your statistics</h2>
                     </div>
                 </div>
                 <div class='content'>
@@ -97,6 +122,21 @@ export default class Layout extends React.Component {
                     </div>
                 </div>
             </div>
-        );
+            );
+        }else{
+          return(
+            <div class='container-fluid'>
+              <div class='row'>
+                  <div class='col-md-6 col-xl-6 col-sm-6 col-xs-6 titleBar'>
+                      <h2 class='button button--sacnite' onClick={() => this.changeDisplayState(0)}>Your salary</h2>
+                  </div>
+                  <div class='col-md-6 col-xl-6 col-sm-6 col-xs-6 statsBar'>
+                      <h2 class='button button--sacnite' onClick={() => this.changeDisplayState(1)}>Your statistics</h2>
+                  </div>
+              </div>
+            <Stats statsData={this.state.chartData}></Stats>
+            </div>
+            );
+        }
     }
 }
