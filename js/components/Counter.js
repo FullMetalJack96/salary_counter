@@ -5,8 +5,8 @@ export default class Counter extends React.Component {
     constructor() {
         super();
         this.state = {
-            salaryCounter: 1111,
-            time: 1111
+            salaryCounter: 0,
+            time: 0
         }
     }
 

@@ -17,12 +17,12 @@ export default class Stats extends React.Component {
     componentWillMount(){
       var that = this
       var mondayData = 0, tuesdayData = 0, wednesdayData = 0, thursdayData = 0, fridayData = 0, saturdayData = 0, sundayData = 0
-
+      var monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
       setTimeout(function () {
         var salary = 0;
         var hours = 0;
         for (let value of that.props.statsData) {
-
+          console.log(monthArray[parseInt(value.date.split('.')[1])-1])
           salary+=value.salary_full
           hours+=value.sessionTime / (60 * 60)
           that.hours = Math.round(hours * 100) / 100
@@ -69,6 +69,7 @@ export default class Stats extends React.Component {
           <div>
             <section class='statsPanelLeft col-md-6 col-xl-6 col-sm-6 col-xs-6'>
               <div class='monthStats'>
+
                 <span>Salary: {this.salary} zł</span>
               <br/>
                 <span>Hours: {this.hours} h</span>
@@ -76,7 +77,6 @@ export default class Stats extends React.Component {
               <div class='yearStats'>Year</div>
             </section>
             <section class='statsPanelRight col-md-6 col-xl-6 col-sm-6 col-xs-6'>
-              <LineChart.Line data={this.state} width="350" height="180"/>
               <LineChart.Line data={this.state} width="350" height="180"/>
           </section>
         </div>
