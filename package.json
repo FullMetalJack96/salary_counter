@@ -38,6 +38,7 @@
     "react": "^0.14.6",
     "react-chartjs": "^0.8.0",
     "react-dom": "^0.14.6",
+    "react-popup": "^0.6.0",
     "webpack": "^1.12.9",
     "webpack-dev-server": "^1.14.1"
   }

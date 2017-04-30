@@ -1,9 +1,11 @@
 import React from 'react';
+import ReactDom from 'react-dom';
 import Clock from "./Clock";
 import Inputs from "./Inputs";
 import Counter from "./Counter";
 import Stats from "./Stats";
 import $ from "jquery"
+import Popup from 'react-popup';
 
 
 const ipcRenderer = window.require('electron').ipcRenderer;
@@ -23,8 +25,6 @@ var config = {
 firebase.initializeApp(config);
 
 
-//displayState = 0 - salary/ 1- Stats
-
 export default class Layout extends React.Component {
     constructor() {
         super();
@@ -37,18 +37,62 @@ export default class Layout extends React.Component {
         var started = false;
     }
 
+    componentDidMount(){
+
+      if(localStorage.username==null){
+        Popup.prompt('Type your name below', 'What\'s your name?', {
+              type: 'text'
+          }, {
+              text: 'Save',
+              className: 'success',
+              action: function(Box) {
+                  localStorage.username = Box.value;
+                  Box.close();
+              }
+          });
+      }
+
+    }
     changeDisplayState(viewStateNr){
+
+      Popup.create({
+        title: null,
+        content: 'Save your session before heading to statistics!',
+        buttons: {
+            left: [{
+                text: 'Cancel',
+                className: 'danger',
+                action: function () {
+                    Popup.close();
+                }
+            }],
+            right: [{
+                text: 'Alt',
+                action: function () {
+                    Popup.alert('You pressed the Alt btn');
+                    Popup.close();
+                }
+            }, {
+                text: 'Save',
+                className: 'success',
+                action: function () {
+                    Popup.alert('You pressed the Save btn');
+                    Popup.close();
+                }
+            }]
+        }
+    });
+
 
       switch (viewStateNr) {
         case 0:
           this.setState({displayState: 'salary'})
-
           break;
         case 1:
           var data;
           this.setState({displayState: 'stats'})
           var that = this
-          firebase.database().ref().on("child_added", function(snapshot, prevChildKey) {
+          firebase.database().ref('sessions/user/').on("child_added", function(snapshot, prevChildKey) {
             data = snapshot.val();
             var array = $.map(data, function(value, index){
               return [value]
@@ -72,12 +116,15 @@ export default class Layout extends React.Component {
     setSalary(value) {
         this.setState({salaryBase: value})
     }
-    writeUserData(time, salary, date, sessionId, day) {
 
-        firebase.database().ref('sessions/' + sessionId).set({day: day,sessionTime: time, salary_full: salary, salary_base: this.state.salaryBase, date: date, user: "Jacek"});
+    writeUserData(time, salary, date, sessionId, day, user) {
+
+        firebase.database().ref('sessions/user/'+user+'/'+ sessionId).set({day: day,sessionTime: time, salary_full: salary, salary_base: this.state.salaryBase, date: date});
     }
 
     saveSession(time, salary) {
+
+        Popup.alert('Session saved');
         if (this.state.saveSession) {
 
             ipcRenderer.send('async', {
@@ -98,7 +145,7 @@ export default class Layout extends React.Component {
 
             var sessionId = daysArray[date.getDay()] + "_" + date.getFullYear() + "_" + date.getTime();
 
-            this.writeUserData(time, salary, date.toLocaleString(), sessionId, daysArray[date.getDay()]);
+            this.writeUserData(time, salary, date.toLocaleString(), sessionId, daysArray[date.getDay()], localStorage.username);
 
             this.setState({saveSession: false})
         }
@@ -111,6 +158,7 @@ export default class Layout extends React.Component {
         if (this.state.displayState == 'salary') {
           return(
             <div class='container-fluid'>
+               <Popup />
                 <div class='row'>
                     <div class='col-md-6 col-xl-6 col-sm-6 col-xs-6 titleBar'>
                         <h2 class='button button--sacnite' onClick={() => this.changeDisplayState(0)}>Your salary</h2>

@@ -22,7 +22,7 @@ export default class Stats extends React.Component {
         var salary = 0;
         var hours = 0;
         for (let value of that.props.statsData) {
-          console.log(monthArray[parseInt(value.date.split('.')[1])-1])
+          console.log(value);
           salary+=value.salary_full
           hours+=value.sessionTime / (60 * 60)
           that.hours = Math.round(hours * 100) / 100
