@@ -40,6 +40,6 @@
     "react-dom": "^0.14.6",
     "react-popup": "^0.6.0",
     "webpack": "^1.12.9",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": ">=3.1.11"
   }
 }
